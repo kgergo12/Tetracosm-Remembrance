@@ -1,0 +1,22 @@
+﻿<Window x:Class="Tetracosm_Remembrance.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Tetracosm_Remembrance"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Topmost="True" Left="0" Top="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+    <Grid>
+        
+        <Label x:Name="MomentumXDisplay" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White"/>
+        <Label x:Name="MomentumYDisplay" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White" Margin="0,24,0,0"/>
+        <Label x:Name="XPosition" Content="Position" HorizontalAlignment="Left" Margin="0,50,0,0" VerticalAlignment="Top" Background="White"/>
+        <Label x:Name="ScreenWidth" Content="Label" HorizontalAlignment="Left" Margin="0,102,0,0" VerticalAlignment="Top" Background="White"/>
+        <Label x:Name="YPosition" Content="Label" HorizontalAlignment="Left" Margin="0,76,0,0" VerticalAlignment="Top" Background="White"/>
+        <Label x:Name="ScreenHeight" Content="Label" HorizontalAlignment="Left" Margin="0,128,0,0" VerticalAlignment="Top" Background="White"/>
+        <Label x:Name="TargetX" Content="Label" HorizontalAlignment="Left" Margin="0,153,0,0" VerticalAlignment="Top" Background="White"/>
+        <Label x:Name="TargetY" Content="Label" HorizontalAlignment="Left" Margin="0,179,0,0" VerticalAlignment="Top" Background="White"/>
+        <Image x:Name="MainObject" HorizontalAlignment="Left" Height="60" VerticalAlignment="Top" Width="60" Source="/Nexus Body_robo-aria.gif"/>
+
+    </Grid>
+</Window>
