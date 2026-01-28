@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Topmost="True" Left="0" Top="0" HorizontalAlignment="Left" VerticalAlignment="Top" KeyUp="DebugToggle">
     <Grid>
-        <Image x:Name="MainObject" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Source="/Gifs_Images/AriaFly.gif" gif:ImageBehavior.AnimatedSource="/Gifs_Images/AriaFly.gif" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" MouseRightButtonDown="MainObject_RightClick" MouseLeftButtonDown="MainObject_Flick">
+        <Image x:Name="MainObject" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Source="/Gifs_Images/AriaFly.gif" gif:ImageBehavior.AnimatedSource="/Gifs_Images/AriaFly.gif" RenderOptions.BitmapScalingMode="NearestNeighbor" MouseRightButtonDown="MainObject_RightClick" MouseLeftButtonDown="MainObject_Flick" Panel.ZIndex="10">
             <Image.LayoutTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1"/>
@@ -30,13 +30,5 @@
             <Label x:Name="SwitcherDisplay" Content="Switcher" HorizontalAlignment="Left" Margin="0,171,0,0" VerticalAlignment="Top"/>
             <Label x:Name="CurrentBehaviourDisplay" Content="Current Behaviour" HorizontalAlignment="Left" Margin="0,197,0,0" VerticalAlignment="Top"/>
         </Grid>
-        <Image HorizontalAlignment="Left" Height="20" Margin="212,35,0,0" VerticalAlignment="Top" Width="20" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" gif:ImageBehavior.AnimatedSource="/Gifs_Images/Z.gif" Visibility="Hidden"/>
-        <Image HorizontalAlignment="Left" Height="20" Margin="212,35,0,0" VerticalAlignment="Top" Width="20" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" gif:ImageBehavior.AnimatedSource="/Gifs_Images/Z.gif" Visibility="Hidden"/>
-        <Image HorizontalAlignment="Left" Height="20" Margin="212,35,0,0" VerticalAlignment="Top" Width="20" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" gif:ImageBehavior.AnimatedSource="/Gifs_Images/Z.gif" Visibility="Hidden"/>
-        <Image HorizontalAlignment="Left" Height="20" Margin="212,35,0,0" VerticalAlignment="Top" Width="20" Source="/Gifs_Images/Green Note.png" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
-        <Image HorizontalAlignment="Left" Height="20" Margin="212,35,0,0" VerticalAlignment="Top" Width="20" Source="/Gifs_Images/Green Note.png" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
-        <Image HorizontalAlignment="Left" Height="20" Margin="212,35,0,0" VerticalAlignment="Top" Width="20" Source="/Gifs_Images/Green Note.png" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
-        <Image HorizontalAlignment="Left" Height="20" Margin="212,35,0,0" VerticalAlignment="Top" Width="20" Source="/Gifs_Images/Green Note.png" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
-        <Image HorizontalAlignment="Left" Height="20" Margin="212,35,0,0" VerticalAlignment="Top" Width="20" Source="/Gifs_Images/Green Note.png" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
     </Grid>
 </Window>

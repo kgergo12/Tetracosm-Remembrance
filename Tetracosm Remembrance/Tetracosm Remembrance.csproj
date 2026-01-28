@@ -119,12 +119,34 @@
     <Resource Include="Gifs_Images\AriaSing.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Gifs_Images\Green Note.png" />
-    <Resource Include="Gifs_Images\Orange Note.png" />
-    <Resource Include="Gifs_Images\Red Note.png" />
+    <Resource Include="Gifs_Images\Z.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Gifs_Images\Z.gif" />
+    <Resource Include="Gifs_Images\Green Note.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Gifs_Images\Orange Note.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Gifs_Images\Red Note.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="Sound_Effects\aria0.ogg" />
+    <Content Include="Sound_Effects\aria1.ogg" />
+    <Content Include="Sound_Effects\aria10.ogg" />
+    <Content Include="Sound_Effects\aria11.ogg" />
+    <Content Include="Sound_Effects\aria12.ogg" />
+    <Content Include="Sound_Effects\aria13.ogg" />
+    <Content Include="Sound_Effects\aria2.ogg" />
+    <Content Include="Sound_Effects\aria3.ogg" />
+    <Content Include="Sound_Effects\aria4.ogg" />
+    <Content Include="Sound_Effects\aria5.ogg" />
+    <Content Include="Sound_Effects\aria6.ogg" />
+    <Content Include="Sound_Effects\aria7.ogg" />
+    <Content Include="Sound_Effects\aria8.ogg" />
+    <Content Include="Sound_Effects\aria9.ogg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
