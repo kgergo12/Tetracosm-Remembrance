@@ -49,6 +49,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif, Version=2.0.0.0, Culture=neutral, PublicKeyToken=9e7cd3b544a090dc, processorArchitecture=MSIL">
+      <HintPath>..\packages\WpfAnimatedGif.2.0.2\lib\net40\WpfAnimatedGif.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -86,6 +89,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -95,15 +99,32 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Nexus Body_robo-aria.gif" />
+    <Resource Include="Gifs_Images\AriaIdle.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="pixil-frame-0.png" />
+    <Resource Include="Gifs_Images\AriaBlink.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Gifs_Images\AriaFly.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Gifs_Images\AriaSleep.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Gifs_Images\AriaTailMove.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Frames\Fly\" />
-    <Folder Include="Frames\Sing\" />
-    <Folder Include="Frames\Sit\" />
+    <Resource Include="Gifs_Images\AriaSing.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gifs_Images\Green Note.png" />
+    <Resource Include="Gifs_Images\Orange Note.png" />
+    <Resource Include="Gifs_Images\Red Note.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gifs_Images\Z.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
