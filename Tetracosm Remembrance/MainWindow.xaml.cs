@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NAudio.Vorbis;
+using NAudio.Wave;
+using System;
 using System.Collections.Generic;
 using System.Timers;
 using System.Windows;
@@ -31,6 +33,7 @@ namespace Tetracosm_Remembrance
             Duration = TimeSpan.FromSeconds(2),
             FillBehavior = FillBehavior.Stop
         };
+        static MediaPlayer SoundPlayer = new MediaPlayer();
         static List<Image> Zs = new List<Image>();
         static List<Image> Notes = new List<Image>();
         static int NextNote = 0;
@@ -38,7 +41,7 @@ namespace Tetracosm_Remembrance
         static double[] Target = { 0, 0 };
 
         static int Switcher = 0;
-        static int CurrentBehaviour = 2;
+        static int CurrentBehaviour = 0;
         static int PrevTriggerBehaviour = 0;
         static bool FacingLeft = false;
         static bool LockedFacingDirection = false;
@@ -83,7 +86,7 @@ namespace Tetracosm_Remembrance
                     Height = 20,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top,
-                    Margin = new Thickness(20, 20, 0, 0)
+                    Margin = new Thickness(-20, -20, 0, 0)
                 };
                 var image = new BitmapImage();
                 image.BeginInit();
@@ -220,7 +223,7 @@ namespace Tetracosm_Remembrance
                         MoveAnim.By = new Thickness(Momentum[0], Momentum[1], 0, 0);
                         break;
                 }
-                MainObject.BeginAnimation(Image.MarginProperty, MoveAnim, HandoffBehavior.Compose);
+                MainObject.BeginAnimation(Image.MarginProperty, MoveAnim);
 
                 MomentumXDisplay.Content = "XMomentum: " + Math.Round(Momentum[0], 1).ToString();
                 MomentumYDisplay.Content = "YMomentum: " + Math.Round(Momentum[1], 1).ToString();
@@ -237,12 +240,12 @@ namespace Tetracosm_Remembrance
         {
             Dispatcher.BeginInvoke((Action)delegate ()
             {
-                if (Switcher > Rand.Next(7, 36))
+                /*if (Switcher > Rand.Next(7, 36))
                 {
                     CurrentBehaviour = Rand.Next(3);
                     MomentumAdjustmentTimer.Interval = 230;
                     Switcher = 0;
-                }
+                }*/
                 switch (CurrentBehaviour)
                 {
 
@@ -336,13 +339,20 @@ namespace Tetracosm_Remembrance
                 ImageBehavior.SetAnimatedSource(MainObject, image);
             }
         }
-
+        static WaveOutEvent oggPlayer = new WaveOutEvent();
+        VorbisWaveReader vorbis = new VorbisWaveReader("../../Sound_Effects/aria" + Rand.Next(7) + ".ogg");
         private void RandomSing(object sender, ElapsedEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)delegate ()
             {
+                
                 if (MainObject.Margin.Top == Height - 70 && CurrentBehaviour == 2)
                 {
+                    vorbis.Dispose();
+                    oggPlayer.Stop();
+                    oggPlayer.Dispose();
+                    //vorbis.Close();
+                    //GC.Collect();
                     if (FacingLeft)
                     {
                         SingEffectAnim.From = new Thickness(MainObject.Margin.Left + 20, Height - 60, 0, 0);
@@ -353,8 +363,6 @@ namespace Tetracosm_Remembrance
                     }
                     double left = Rand.Next(-40, 40);
                     SingEffectAnim.By = new Thickness(left, (100 - Math.Abs(left)) * -1, 0, 0);
-                    /*SingEffectAnim.From = new Thickness(MainObject.Margin.Left + 55, Height - 120, 0, 0);
-                    SingEffectAnim.By = new Thickness(0, 0, 0, 0);*/
                     var image = new BitmapImage();
                     image.BeginInit();
                     var controller = ImageBehavior.GetAnimationController(Notes[NextNote]);
@@ -375,32 +383,63 @@ namespace Tetracosm_Remembrance
                     }
                     image.EndInit();
                     ImageBehavior.SetAnimatedSource(Notes[NextNote], image);
+
+                    vorbis = new VorbisWaveReader("../../Sound_Effects/aria" + Rand.Next(7) + ".ogg");
+                    oggPlayer = new WaveOutEvent();
+                    oggPlayer.Init(vorbis);
+                    oggPlayer.Play();
+
                     Notes[NextNote].BeginAnimation(Image.MarginProperty, SingEffectAnim);
                     NextNote++;
-                    if (NextNote>=Notes.Count)
+                    if (NextNote >= Notes.Count)
                     {
                         NextNote = 0;
                     }
-                    SingTimer.Interval = Rand.Next(300,1500);
+                    SingTimer.Interval = Rand.Next(800,1500);
                 }
             });
         }
 
         public void PlayNote(int note)
         {
-            if (MainObject.Margin.Top == Height - 70)
+            if (MainObject.Margin.Top == Height - 70 && CurrentBehaviour == 2)
             {
                 if (FacingLeft)
                 {
-                    SingEffectAnim.From = new Thickness(MainObject.Margin.Left - 55, Height - 60, 0, 0);
+                    SingEffectAnim.From = new Thickness(MainObject.Margin.Left + 20, Height - 60, 0, 0);
                 }
                 else
                 {
-                    SingEffectAnim.From = new Thickness(MainObject.Margin.Left - 45, Height - 60, 0, 0);
+                    SingEffectAnim.From = new Thickness(MainObject.Margin.Left + 55, Height - 60, 0, 0);
                 }
-                double left = Rand.Next(-90, 90);
-                SingEffectAnim.By = new Thickness(left, (170 - Math.Abs(left)) * -1, 0, 0);
-
+                double left = Rand.Next(-40, 40);
+                SingEffectAnim.By = new Thickness(left, (100 - Math.Abs(left)) * -1, 0, 0);
+                var image = new BitmapImage();
+                image.BeginInit();
+                var controller = ImageBehavior.GetAnimationController(Notes[NextNote]);
+                switch (Rand.Next(3))
+                {
+                    case 0:
+                        image.UriSource = new Uri("/Tetracosm Remembrance;component/Gifs_Images/Green Note.gif", UriKind.Relative);
+                        image.BaseUri = BaseUriHelper.GetBaseUri(this);
+                        break;
+                    case 1:
+                        image.UriSource = new Uri("/Tetracosm Remembrance;component/Gifs_Images/Orange Note.gif", UriKind.Relative);
+                        image.BaseUri = BaseUriHelper.GetBaseUri(this);
+                        break;
+                    case 2:
+                        image.UriSource = new Uri("/Tetracosm Remembrance;component/Gifs_Images/Red Note.gif", UriKind.Relative);
+                        image.BaseUri = BaseUriHelper.GetBaseUri(this);
+                        break;
+                }
+                image.EndInit();
+                ImageBehavior.SetAnimatedSource(Notes[NextNote], image);
+                Notes[NextNote].BeginAnimation(Image.MarginProperty, SingEffectAnim);
+                NextNote++;
+                if (NextNote >= Notes.Count)
+                {
+                    NextNote = 0;
+                }
             }
         }
 

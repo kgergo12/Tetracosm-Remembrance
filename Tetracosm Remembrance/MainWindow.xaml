@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Tetracosm_Remembrance"
         xmlns:gif="http://wpfanimatedgif.codeplex.com" x:Class="Tetracosm_Remembrance.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Topmost="True" Left="0" Top="0" HorizontalAlignment="Left" VerticalAlignment="Top" KeyUp="DebugToggle">
+        Title="Aria" Height="450" Width="800" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Topmost="True" Left="0" Top="0" HorizontalAlignment="Left" VerticalAlignment="Top" KeyUp="DebugToggle" Icon="/Gifs_Images/AriaSleep.gif">
     <Grid>
         <Image x:Name="MainObject" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Source="/Gifs_Images/AriaFly.gif" gif:ImageBehavior.AnimatedSource="/Gifs_Images/AriaFly.gif" RenderOptions.BitmapScalingMode="NearestNeighbor" MouseRightButtonDown="MainObject_RightClick" MouseLeftButtonDown="MainObject_Flick" Panel.ZIndex="10">
             <Image.LayoutTransform>
