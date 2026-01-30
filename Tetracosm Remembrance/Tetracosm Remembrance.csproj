@@ -169,9 +169,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Gifs_Images\AriaSing.gif" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Gifs_Images\Z.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -186,13 +183,13 @@
     <Resource Include="Gifs_Images\Red Note.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Gifs_Images\AriaSing.gif" />
     <Content Include="Sound_Effects\aria0.ogg" />
     <Content Include="Sound_Effects\aria1.ogg" />
     <Content Include="Sound_Effects\aria2.ogg" />
     <Content Include="Sound_Effects\aria3.ogg" />
     <Content Include="Sound_Effects\aria4.ogg" />
     <Content Include="Sound_Effects\aria5.ogg" />
-    <Content Include="Sound_Effects\aria6.ogg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
