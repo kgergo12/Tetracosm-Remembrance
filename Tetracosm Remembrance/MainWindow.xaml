@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Tetracosm_Remembrance"
         xmlns:gif="http://wpfanimatedgif.codeplex.com" x:Class="Tetracosm_Remembrance.MainWindow"
         mc:Ignorable="d"
-        Title="Aria" Height="450" Width="800" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Topmost="True" Left="0" Top="0" HorizontalAlignment="Left" VerticalAlignment="Top" KeyUp="DebugToggle" Icon="/Gifs_Images/AriaSleep.gif">
+        Title="Aria" Height="450" Width="800" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Topmost="True" Left="0" Top="0" HorizontalAlignment="Left" VerticalAlignment="Top" KeyUp="PanelToggles" Icon="/Gifs_Images/AriaSleep.gif">
     <Grid>
         <Image x:Name="MainObject" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Source="/Gifs_Images/AriaFly.gif" gif:ImageBehavior.AnimatedSource="/Gifs_Images/AriaFly.gif" RenderOptions.BitmapScalingMode="NearestNeighbor" MouseRightButtonDown="MainObject_RightClick" MouseLeftButtonDown="MainObject_Flick" Panel.ZIndex="10">
             <Image.LayoutTransform>
@@ -18,7 +18,7 @@
                 </TransformGroup>
             </Image.LayoutTransform>
         </Image>
-        <Grid x:Name="DebugInfo" Margin="0,0,594,150" VerticalAlignment="Top" HorizontalAlignment="Left" Background="#996D6D6D" Visibility="Collapsed">
+        <Grid x:Name="DebugPanel" Margin="200,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Background="#996D6D6D" Panel.ZIndex="20" Visibility="Collapsed">
             <Label x:Name="MomentumXDisplay" Content="MomentumX" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,114,0,0"/>
             <Label x:Name="MomentumYDisplay" Content="MomentumY" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,140,0,0"/>
             <Label x:Name="XPosition" Content="XPosition" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -29,6 +29,32 @@
             <Label x:Name="ScreenHeight" Content="ScreenHeight" HorizontalAlignment="Left" Margin="0,254,0,0" VerticalAlignment="Top"/>
             <Label x:Name="SwitcherDisplay" Content="Switcher" HorizontalAlignment="Left" Margin="0,171,0,0" VerticalAlignment="Top"/>
             <Label x:Name="CurrentBehaviourDisplay" Content="Current Behaviour" HorizontalAlignment="Left" Margin="0,197,0,0" VerticalAlignment="Top"/>
+        </Grid>
+        <Grid x:Name="PianoPanel" Background="#996D6D6D" VerticalAlignment="Bottom" HorizontalAlignment="Left" Panel.ZIndex="20" Visibility="Collapsed">
+            <Button Content="0" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Center" Width="40" Height="40" FontSize="24" Background="#FF78FA78" BorderBrush="#FF50B450" Click="PianoButtonDown"/>
+            <Button Content="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" Height="40" FontSize="24" Margin="60,10,10,10" BorderBrush="#FF50B450" Background="#FF78FA78" Click="PianoButtonDown"/>
+            <Button Content="2" HorizontalAlignment="Left" Margin="110,10,10,10" VerticalAlignment="Center" Width="40" Height="40" FontSize="24" Background="#FFFAB450" BorderBrush="#FF7D5A28" Click="PianoButtonDown"/>
+            <Button Content="3" HorizontalAlignment="Left" Margin="160,10,10,10" VerticalAlignment="Center" Width="40" Height="40" FontSize="24" Background="#FFFAB450" BorderBrush="#FF7D5A28" Click="PianoButtonDown"/>
+            <Button Content="4" HorizontalAlignment="Left" Margin="210,10,10,10" VerticalAlignment="Center" Width="40" Height="40" FontSize="24" BorderBrush="#FF7D1E1E" Background="#FFFA3C3C" Click="PianoButtonDown"/>
+            <Button Content="5" HorizontalAlignment="Left" Margin="260,10,10,10" VerticalAlignment="Center" Width="40" Height="40" FontSize="24" Background="#FFFA3C3C" BorderBrush="#FF7D1E1E" Click="PianoButtonDown"/>
+        </Grid>
+        <Grid x:Name="SettingsPanel" Background="#996D6D6D" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="20">
+            <CheckBox x:Name="SoundCheck" Content="Sound Effects" HorizontalAlignment="Left" Margin="10,170,0,0" VerticalAlignment="Top" IsChecked="True"/>
+            <CheckBox x:Name="SongInaccuracy" Content="Inaccurate Singing" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="False" Margin="10,195,0,0"/>
+            <Slider x:Name="VolumeSlider" HorizontalAlignment="Left" Margin="10,225,0,0" VerticalAlignment="Top" Width="120" Maximum="1" LargeChange="0.2" Value="0.5"/>
+            <Label Content="Volume" HorizontalAlignment="Left" Margin="135,221,0,0" VerticalAlignment="Top"/>
+            <TextBox x:Name="PlayerCountSetter" HorizontalAlignment="Left" Margin="10,255,10,10" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="120" Background="{x:Null}"/>
+            <Button Content="Set Audio Player Amount" HorizontalAlignment="Left" Margin="135,254,10,10" VerticalAlignment="Top" Click="SetAudioPlayerCount"/>
+            <TextBox x:Name="MaxMomentumSetter" HorizontalAlignment="Left" Margin="10,33,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="120" Background="{x:Null}"/>
+            <Button Content="Set Maximum Momentum" HorizontalAlignment="Left" Margin="135,32,10,10" VerticalAlignment="Top" Click="SetMaximumMomentum"/>
+            <TextBox x:Name="MomentumAdjustmentSetter" HorizontalAlignment="Left" Margin="10,58,0,0" TextWrapping="Wrap" Text="180" VerticalAlignment="Top" Width="120" Background="{x:Null}"/>
+            <Button Content="Set Momentum Adjustment" HorizontalAlignment="Left" Margin="135,57,10,10" VerticalAlignment="Top" Click="SetMomentumAdjustment"/>
+            <Label Content="Audio" VerticalAlignment="Top" Margin="0,138,0,0" HorizontalContentAlignment="Center" BorderBrush="#996D6D6D" BorderThickness="0,0,0,2"/>
+            <Label Content="Movement" VerticalAlignment="Top" HorizontalContentAlignment="Center" BorderBrush="#996D6D6D" BorderThickness="0,0,0,2"/>
+            <TextBox x:Name="MomentumAdjustmentIntervalSetter" HorizontalAlignment="Left" Margin="10,85,0,0" TextWrapping="Wrap" Text="230" VerticalAlignment="Top" Width="120" Background="{x:Null}"/>
+            <Button Content="Set Momentum Adjustment Interval" HorizontalAlignment="Left" Margin="135,84,10,0" VerticalAlignment="Top" Click="SetMomentumAdjustmentInterval"/>
+            <TextBox x:Name="TargettingTimerIntervalSetter" HorizontalAlignment="Left" Margin="10,115,0,0" TextWrapping="Wrap" Text="3500" VerticalAlignment="Top" Width="120" Background="{x:Null}"/>
+            <Button Content="Set Targetting Timer Interval" HorizontalAlignment="Left" Margin="135,114,0,0" VerticalAlignment="Top" Click="SetNewTargetInterval"/>
         </Grid>
     </Grid>
 </Window>

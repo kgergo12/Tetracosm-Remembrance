@@ -36,14 +36,17 @@ namespace Tetracosm_Remembrance
         static List<Image> Zs = new List<Image>();
         static List<Image> Notes = new List<Image>();
         static int NextNote = 0;
+        static int MaxMomentum = 50;
+        static int MomentumAdjustment = 180;
         static double[] Momentum = { 0, 0 };
         static double[] Target = { 0, 0 };
 
         static int Switcher = 0;
-        static int CurrentBehaviour = 2;
+        static int CurrentBehaviour = 0;
         static int PrevTriggerAnim = 0;
         static bool FacingLeft = false;
         static bool LockedFacingDirection = false;
+        static bool LockCurrentBehaviour = false;
 
         static bool FinishedSong = true;
         static int SongProgress = 0;
@@ -62,7 +65,7 @@ namespace Tetracosm_Remembrance
         {
             InitializeComponent();
             Height = SystemParameters.VirtualScreenHeight - 1;
-            Width = SystemParameters.PrimaryScreenWidth;
+            Width = SystemParameters.VirtualScreenWidth;
 
             for (int i = 0; i < 3; i++)
             {
@@ -163,16 +166,16 @@ namespace Tetracosm_Remembrance
         {
             Dispatcher.BeginInvoke((Action)delegate ()
             {
-                Momentum[0] = Clamp(Momentum[0] + (Target[0] - MainObject.Margin.Left) / 180, -50, 50);
-                Momentum[1] = Clamp(Momentum[1] + (Target[1] - MainObject.Margin.Top) / 90, -50, 50);
+                Momentum[0] = Clamp(Momentum[0] + (Target[0] - MainObject.Margin.Left) / MomentumAdjustment, MaxMomentum*-1, MaxMomentum);
+                Momentum[1] = Clamp(Momentum[1] + (Target[1] - MainObject.Margin.Top) / (MomentumAdjustment/2), MaxMomentum * -1, MaxMomentum);
                 MoveAnim.To = null;
                 if (MainObject.Margin.Left + Momentum[0] < 0 || MainObject.Margin.Left + Momentum[0] > Width - 40)
                 {
-                    Momentum[0] = Clamp(Momentum[0] + (Target[0] - MainObject.Margin.Left) / 60, -50, 50);
+                    Momentum[0] = Clamp(Momentum[0] + (Target[0] - MainObject.Margin.Left) / (MomentumAdjustment/3), MaxMomentum * -1, MaxMomentum);
                 }
                 if (MainObject.Margin.Top + Momentum[1] < 0 || MainObject.Margin.Top + Momentum[1] > Height - 40)
                 {
-                    Momentum[1] = Clamp(Momentum[1] + (Target[1] - MainObject.Margin.Top) / 30, -50, 50);
+                    Momentum[1] = Clamp(Momentum[1] + (Target[1] - MainObject.Margin.Top) / (MomentumAdjustment / 6), MaxMomentum * -1, MaxMomentum);
                 }
                 if (Momentum[0] != Math.Abs(Momentum[0]) && !LockedFacingDirection)
                 {
@@ -193,7 +196,7 @@ namespace Tetracosm_Remembrance
                         ChangeAnim(0);
                         break;
                     case 1:
-                        if (MainObject.Margin.Top > Height - 160)
+                        if (MainObject.Margin.Top > Height - 160 && MainObject.Margin.Left > 150)
                         {
                             Momentum[0] = 0;
                             Momentum[1] = -60;
@@ -207,7 +210,7 @@ namespace Tetracosm_Remembrance
                         }
                         break;
                     case 2:
-                        if (MainObject.Margin.Top > Height - 160)
+                        if (MainObject.Margin.Top > Height - 160 && MainObject.Margin.Left > 310)
                         {
                             Momentum[0] = 0;
                             Momentum[1] = -60;
@@ -221,7 +224,7 @@ namespace Tetracosm_Remembrance
                         }
                         break;
                     case 3:
-                        if (MainObject.Margin.Top > Height - 160)
+                        if (MainObject.Margin.Top > Height - 160 && MainObject.Margin.Left > 150)
                         {
                             Momentum[0] = 0;
                             Momentum[1] = -60;
@@ -240,14 +243,17 @@ namespace Tetracosm_Remembrance
                 }
                 MainObject.BeginAnimation(Image.MarginProperty, MoveAnim);
 
-                MomentumXDisplay.Content = "XMomentum: " + Math.Round(Momentum[0], 1).ToString();
-                MomentumYDisplay.Content = "YMomentum: " + Math.Round(Momentum[1], 1).ToString();
-                XPosition.Content = "LeftMargin: " + Math.Round(MainObject.Margin.Left, 1).ToString();
-                YPosition.Content = "TopMargin: " + Math.Round(MainObject.Margin.Top, 1).ToString();
-                SwitcherDisplay.Content = "Switcher: " + Switcher.ToString();
-                CurrentBehaviourDisplay.Content = "Current Behaviour: " + CurrentBehaviour.ToString();
-                ScreenWidth.Content = "ScreenWidth: " + Width.ToString();
-                ScreenHeight.Content = "ScreenHeight: " + Height.ToString();
+                if (DebugPanel.Visibility == Visibility.Visible)
+                {
+                    MomentumXDisplay.Content = "XMomentum: " + Math.Round(Momentum[0], 1).ToString();
+                    MomentumYDisplay.Content = "YMomentum: " + Math.Round(Momentum[1], 1).ToString();
+                    XPosition.Content = "LeftMargin: " + Math.Round(MainObject.Margin.Left, 1).ToString();
+                    YPosition.Content = "TopMargin: " + Math.Round(MainObject.Margin.Top, 1).ToString();
+                    SwitcherDisplay.Content = "Switcher: " + Switcher.ToString();
+                    CurrentBehaviourDisplay.Content = "Current Behaviour: " + CurrentBehaviour.ToString();
+                    ScreenWidth.Content = "ScreenWidth: " + Width.ToString();
+                    ScreenHeight.Content = "ScreenHeight: " + Height.ToString();
+                }
             });
         }
 
@@ -257,9 +263,7 @@ namespace Tetracosm_Remembrance
             {
                 if (Switcher > Rand.Next(7, 36) && FinishedSong)
                 {
-                    CurrentBehaviour = Rand.Next(3);
-                    MomentumAdjustmentTimer.Interval = 230;
-                    Switcher = 0;
+                    ChangeBehaviour(Rand.Next(4));
                 }
                 switch (CurrentBehaviour)
                 {
@@ -272,7 +276,7 @@ namespace Tetracosm_Remembrance
                         Target[1] = (int)Height;
                         break;
                     case 2:
-                        Target[0] = 400;
+                        Target[0] = 450;
                         Target[1] = (int)Height;
                         break;
                     case 3:
@@ -284,9 +288,12 @@ namespace Tetracosm_Remembrance
                         Target[1] = Rand.Next(40, ((int)Height - 100));
                         break;
                 }
-                TargetX.Content = "TargetX: " + Math.Round(Target[0], 1).ToString();
-                TargetY.Content = "TargetY: " + Math.Round(Target[1], 1).ToString();
-                Switcher++;
+                if (DebugPanel.Visibility == Visibility.Visible)
+                {
+                    TargetX.Content = "TargetX: " + Math.Round(Target[0], 1).ToString();
+                    TargetY.Content = "TargetY: " + Math.Round(Target[1], 1).ToString();
+                    Switcher++;
+                }
             });
         }
 
@@ -295,7 +302,6 @@ namespace Tetracosm_Remembrance
             if (gif != PrevTriggerAnim || gif >= 3)
             {
                 PrevTriggerAnim = gif;
-                LockedFacingDirection = false;
                 SleepEffectAnim.From = new Thickness(-20, -20, 0, 0);
                 SleepEffectAnim.By = new Thickness(0, 0, 0, 0);
                 SleepEffectAnim.BeginTime = TimeSpan.FromMilliseconds(0);
@@ -367,7 +373,7 @@ namespace Tetracosm_Remembrance
                     {
                         FinishedSong = true;
                         SongProgress = 0;
-                        if (Rand.Next(5) > -1)
+                        if (Rand.Next(5) > 3)
                         {
                             SelectSong();
                         }
@@ -388,7 +394,7 @@ namespace Tetracosm_Remembrance
                 FinishedSong = false;
             }
         }
-        public void PlayNote(int note, int delayBeforeNextNote)
+        public void PlayNote(int note, int delayBeforeNextNote = 0)
         {
             if (note < 0)
             {
@@ -451,7 +457,11 @@ namespace Tetracosm_Remembrance
             NoteReaders[NextReader] = new VorbisWaveReader("../../Sound_Effects/aria" + note + ".ogg");
             NotePlayers[NextPlayer] = new WaveOutEvent();
             NotePlayers[NextPlayer].Init(NoteReaders[NextReader]);
-            NotePlayers[NextPlayer].Play();
+            if (SoundCheck.IsChecked == true || LockCurrentBehaviour)
+            {
+                NotePlayers[NextPlayer].Volume = (float)VolumeSlider.Value;
+                NotePlayers[NextPlayer].Play();
+            }
 
             Notes[NextNote].BeginAnimation(Image.MarginProperty, SingEffectAnim);
             NextReader++;
@@ -460,7 +470,7 @@ namespace Tetracosm_Remembrance
                 NextReader = 0;
             }
             NextPlayer++;
-            if (NextPlayer>= NotePlayers.Count)
+            if (NextPlayer >= NotePlayers.Count)
             {
                 NextPlayer = 0;
             }
@@ -469,30 +479,149 @@ namespace Tetracosm_Remembrance
             {
                 NextNote = 0;
             }
-            SingTimer.Interval = delayBeforeNextNote;
-            //SingTimer.Interval = Rand.Next(delayBeforeNextNote-50, delayBeforeNextNote+100);
-        }
-
-        private void DebugToggle(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.RightCtrl)
+            if (delayBeforeNextNote > 0)
             {
-                if (DebugInfo.Visibility == Visibility.Visible)
+                if (SongInaccuracy.IsChecked == false)
                 {
-                    DebugInfo.Visibility = Visibility.Collapsed;
+                    SingTimer.Interval = delayBeforeNextNote;
                 }
                 else
                 {
-                    DebugInfo.Visibility = Visibility.Visible;
+                    SingTimer.Interval = Rand.Next(delayBeforeNextNote - 50, delayBeforeNextNote + 100);
+                }
+            }
+        }
+
+
+        private void PanelToggles(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.RightCtrl:
+                    if (DebugPanel.Visibility == Visibility.Visible)
+                    {
+                        DebugPanel.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        DebugPanel.Visibility = Visibility.Visible;
+                        if (SettingsPanel.Visibility == Visibility.Visible)
+                        {
+                            DebugPanel.Margin = new Thickness(SettingsPanel.ActualWidth, 0, 0, 0);
+                        }
+                        else
+                        {
+                            DebugPanel.Margin = new Thickness(0);
+                        }
+                    }
+                    break;
+                case Key.Escape:
+                    if (SettingsPanel.Visibility == Visibility.Visible)
+                    {
+                        SettingsPanel.Visibility = Visibility.Collapsed;
+                        if (DebugPanel.Visibility == Visibility.Visible)
+                        {
+                            DebugPanel.Margin = new Thickness(0);
+                        }
+                    }
+                    else
+                    {
+                        SettingsPanel.Visibility = Visibility.Visible;
+                        if (DebugPanel.Visibility == Visibility.Visible)
+                        {
+                            DebugPanel.Margin = new Thickness(SettingsPanel.ActualWidth, 0, 0, 0);
+                        }
+                    }
+                    break;
+
+                case Key.P:
+                    if (PianoPanel.Visibility == Visibility.Visible)
+                    {
+                        PianoPanel.Visibility = Visibility.Collapsed;
+                        LockCurrentBehaviour = false;
+                        ChangeBehaviour(Rand.Next(4));
+                        SingTimer.Start();
+                    }
+                    else
+                    {
+                        PianoPanel.Visibility = Visibility.Visible;
+                        ChangeBehaviour(2);
+                        LockCurrentBehaviour = true;
+                        SingTimer.Stop();
+                    }
+                    break;
+                case Key.D0:
+                    if (LockCurrentBehaviour &&
+                        MainObject.Margin.Top > Height - 160 &&
+                        MainObject.Margin.Left > 150)
+                    {
+                        PlayNote(0);
+                    }
+                    break;
+                case Key.D1:
+                    if (LockCurrentBehaviour &&
+                        MainObject.Margin.Top > Height - 160 &&
+                        MainObject.Margin.Left > 150)
+                    {
+                        PlayNote(1);
+                    }
+                    break;
+                case Key.D2:
+                    if (LockCurrentBehaviour &&
+                        MainObject.Margin.Top > Height - 160 &&
+                        MainObject.Margin.Left > 150)
+                    {
+                        PlayNote(2);
+                    }
+                    break;
+                case Key.D3:
+                    if (LockCurrentBehaviour &&
+                        MainObject.Margin.Top > Height - 160 &&
+                        MainObject.Margin.Left > 150)
+                    {
+                        PlayNote(3);
+                    }
+                    break;
+                case Key.D4:
+                    if (LockCurrentBehaviour &&
+                        MainObject.Margin.Top > Height - 160 &&
+                        MainObject.Margin.Left > 150)
+                    {
+                        PlayNote(4);
+                    }
+                    break;
+                case Key.D5:
+                    if (LockCurrentBehaviour &&
+                        MainObject.Margin.Top > Height - 160 &&
+                        MainObject.Margin.Left > 150)
+                    {
+                        PlayNote(5);
+                    }
+                    break;
+            }
+        }
+
+        public void ChangeBehaviour(int behaviour)
+        {
+            if (!LockCurrentBehaviour)
+            {
+                CurrentBehaviour = behaviour;
+                MomentumAdjustmentTimer.Interval = 230;
+                Switcher = 0;
+                if (CurrentBehaviour == 2)
+                {
+                    SongProgress = 0;
+                }
+                else
+                {
+                    FinishedSong = true;
                 }
             }
         }
 
         private void MainObject_RightClick(object sender, MouseButtonEventArgs e)
         {
-            CurrentBehaviour = Rand.Next(4);
-            MomentumAdjustmentTimer.Interval = 230;
-            Switcher = 0;
+            ChangeBehaviour(Rand.Next(4));
         }
 
         private void MainObject_Flick(object sender, MouseButtonEventArgs e)
@@ -511,6 +640,111 @@ namespace Tetracosm_Remembrance
                 case 3:
                     Momentum[1] = -50;
                     break;
+            }
+        }
+
+        private void PianoButtonDown(object sender, RoutedEventArgs e)
+        {
+            if (LockCurrentBehaviour &&
+                        MainObject.Margin.Top > Height - 160 &&
+                        MainObject.Margin.Left > 150
+                        )
+            {
+                PlayNote(int.Parse(((Button)sender).Content.ToString()));
+            }
+        }
+
+        private void SetMaximumMomentum(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MaxMomentum = int.Parse(MaxMomentumSetter.Text);
+            }
+            catch (Exception)
+            {
+                MaxMomentum = 50;
+            }
+        }
+
+        private void SetMomentumAdjustment(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MomentumAdjustment = int.Parse(MomentumAdjustmentSetter.Text);
+            }
+            catch (Exception)
+            {
+                MomentumAdjustment = 180;
+            }
+        }
+
+        private void SetAudioPlayerCount(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int playercount = int.Parse(PlayerCountSetter.Text);
+                if (playercount>0)
+                {
+                    SingTimer.Stop();
+                    NotePlayers.Clear();
+                    NoteReaders.Clear();
+                    NextReader = 0;
+                    NextPlayer = 0;
+                    for (int i = 0; i < playercount; i++)
+                    {
+                        NotePlayers.Add(new WaveOutEvent()); 
+                        VorbisWaveReader vorbis = new VorbisWaveReader("../../Sound_Effects/aria" + 0 + ".ogg");
+                        NoteReaders.Add(vorbis);
+                    }
+                    if (PianoPanel.Visibility == Visibility.Collapsed)
+                    {
+                        SingTimer.Start();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                SingTimer.Stop();
+                NotePlayers.Clear();
+                NoteReaders.Clear();
+                NextReader = 0;
+                NextPlayer = 0;
+                for (int i = 0; i < 4; i++)
+                {
+                    NotePlayers.Add(new WaveOutEvent());
+                    VorbisWaveReader vorbis = new VorbisWaveReader("../../Sound_Effects/aria" + 0 + ".ogg");
+                    NoteReaders.Add(vorbis);
+                }
+                if (PianoPanel.Visibility == Visibility.Collapsed)
+                {
+                    SingTimer.Start();
+                }
+            }
+        }
+
+        private void SetMomentumAdjustmentInterval(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MomentumAdjustmentTimer.Interval = int.Parse(MomentumAdjustmentIntervalSetter.Text);
+                TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
+            }
+            catch (Exception)
+            {
+                MomentumAdjustmentTimer.Interval = 230;
+                TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
+            }
+        }
+
+        private void SetNewTargetInterval(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                TargettingTimer.Interval = int.Parse(TargettingTimerIntervalSetter.Text);
+            }
+            catch (Exception)
+            {
+                TargettingTimer.Interval = 3500;
             }
         }
     }
