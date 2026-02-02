@@ -43,6 +43,7 @@ namespace Tetracosm_Remembrance
         static int NextNote = 0;
         static int MaxMomentum = 50;
         static int MomentumAdjustment = 180;
+        static int DefaultMomentumInterval = 230;
         static double[] Momentum = { 0, 0 };
         static double[] Target = { 0, 0 };
 
@@ -181,10 +182,12 @@ namespace Tetracosm_Remembrance
                             {
                                 MomentumAdjustmentTimer.Interval = int.Parse(splitter[1]);
                                 MomentumAdjustmentIntervalSetter.Text = splitter[1];
+                                DefaultMomentumInterval = int.Parse(splitter[1]);
                             }
                             catch (Exception)
                             {
                                 MomentumAdjustmentTimer.Interval = 230;
+                                DefaultMomentumInterval = 230;
                             }
                             break;
                         case "Targetting Timer Interval":
@@ -221,7 +224,7 @@ namespace Tetracosm_Remembrance
                         case "Volume":
                             try
                             {
-                                VolumeSlider.Value = float.Parse(splitter[1], CultureInfo.InvariantCulture.NumberFormat);
+                                VolumeSlider.Value = float.Parse(splitter[1]);
                             }
                             catch (Exception)
                             {
@@ -471,7 +474,7 @@ namespace Tetracosm_Remembrance
                             SleepEffectAnim.From = new Thickness(MainObject.Margin.Left + MainObject.Width, Height - MainObject.Height / 2, 0, 0);
                             SleepEffectAnim.By = new Thickness(100, -70, 0, 0);
                         }
-                        int delay = (int)MomentumAdjustmentTimer.Interval;
+                        int delay = DefaultMomentumInterval;
                         foreach (Image Z in Zs)
                         {
                             SleepEffectAnim.BeginTime = TimeSpan.FromMilliseconds(delay);
@@ -759,7 +762,7 @@ namespace Tetracosm_Remembrance
             if (!LockCurrentBehaviour)
             {
                 CurrentBehaviour = behaviour;
-                MomentumAdjustmentTimer.Interval = 230;
+                MomentumAdjustmentTimer.Interval = DefaultMomentumInterval;
                 Switcher = 0;
                 if (CurrentBehaviour == 2)
                 {
@@ -882,12 +885,14 @@ namespace Tetracosm_Remembrance
                 MomentumAdjustmentTimer.Interval = int.Parse(MomentumAdjustmentIntervalSetter.Text);
                 MoveAnim.Duration = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
                 SleepEffectAnim.BeginTime = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
+                DefaultMomentumInterval = int.Parse(MomentumAdjustmentIntervalSetter.Text);
             }
             catch (Exception)
             {
                 MomentumAdjustmentTimer.Interval = 230;
                 MoveAnim.Duration = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
                 SleepEffectAnim.BeginTime = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
+                DefaultMomentumInterval = 230;
             }
         }
 
@@ -908,7 +913,7 @@ namespace Tetracosm_Remembrance
             string settings = "";
             settings += $"Max Momentum:{MaxMomentum}\n";
             settings += $"Momentum Adjustment:{MomentumAdjustment}\n";
-            settings += $"Momentum Adjustment Interval:{MomentumAdjustmentTimer.Interval}\n";
+            settings += $"Momentum Adjustment Interval:{DefaultMomentumInterval}\n";
             settings += $"Targetting Timer Interval:{TargettingTimer.Interval}\n";
             settings += $"Sound Effects:{SoundCheck.IsChecked}\n";
             settings += $"Inaccurate Singing:{SongInaccuracy.IsChecked}\n";
