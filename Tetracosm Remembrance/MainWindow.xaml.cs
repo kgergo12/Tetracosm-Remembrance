@@ -2,7 +2,9 @@
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,13 +20,15 @@ namespace Tetracosm_Remembrance
     public partial class MainWindow : Window
     {
         static Random Rand = new Random();
+
         static Timer TargettingTimer = new Timer();
         static Timer MomentumAdjustmentTimer = new Timer();
         static Timer SingTimer = new Timer();
+
         static ThicknessAnimation MoveAnim = new ThicknessAnimation();
         static ThicknessAnimation SleepEffectAnim = new ThicknessAnimation()
         {
-            BeginTime = TimeSpan.FromMilliseconds(230),
+            BeginTime = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval),
             RepeatBehavior = RepeatBehavior.Forever,
             Duration = TimeSpan.FromSeconds(2)
         };
@@ -33,6 +37,7 @@ namespace Tetracosm_Remembrance
             Duration = TimeSpan.FromSeconds(2),
             FillBehavior = FillBehavior.Stop
         };
+
         static List<Image> Zs = new List<Image>();
         static List<Image> Notes = new List<Image>();
         static int NextNote = 0;
@@ -50,23 +55,33 @@ namespace Tetracosm_Remembrance
 
         static bool FinishedSong = true;
         static int SongProgress = 0;
-        string[] SongData = File.ReadAllText("Songs/default.txt").Split(' ');
+        string[] SongData;
         static List<VorbisWaveReader> NoteReaders = new List<VorbisWaveReader>();
         static List<WaveOutEvent> NotePlayers = new List<WaveOutEvent>();
         static int NextPlayer = 0;
         static int NextReader = 0;
-
-        public static double Clamp(double value, double min, double max)
-        {
-            return (value < min) ? min : (value > max) ? max : value;
-        }
 
         public MainWindow()
         {
             InitializeComponent();
             Height = SystemParameters.VirtualScreenHeight - 1;
             Width = SystemParameters.VirtualScreenWidth;
+            
+            if (!File.Exists("Songs"))
+            {
+                Directory.CreateDirectory("Songs");
+                string defaultSong = "3,1100 5,1200 2,1700 3,350 4,350 1,2000 2,1000 4,600 3,600 3,1200 5,600 4,600 2,1300 0,3000";
+                File.WriteAllText("Songs/Default.txt", defaultSong);
+            }
+            else if (IsDirectoryEmpty("Songs"))
+            {
+                string defaultSong = "3,1100 5,1200 2,1700 3,350 4,350 1,2000 2,1000 4,600 3,600 3,1200 5,600 4,600 2,1300 0,3000";
+                File.WriteAllText("Songs/Default.txt", defaultSong);
+            }
+                var files = Directory.GetFiles("Songs/", "*.txt");
+            SongData = File.ReadAllText(files[Rand.Next(files.Length)]).Split(' ');
 
+            
             for (int i = 0; i < 3; i++)
             {
                 Image Z = new Image()
@@ -87,15 +102,6 @@ namespace Tetracosm_Remembrance
                 Zs.Add(Z);
             }
 
-            for (int i = 0; i < 4; i++)
-            {
-                NotePlayers.Add(new WaveOutEvent());
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                VorbisWaveReader vorbis = new VorbisWaveReader("../../Sound_Effects/aria" + 0 + ".ogg");
-                NoteReaders.Add(vorbis);
-            }
             for (int i = 0; i < 8; i++)
             {
                 Image Note = new Image()
@@ -133,6 +139,125 @@ namespace Tetracosm_Remembrance
             SingTimer.Elapsed += RandomSing;
             SingTimer.Start();
 
+            for (int i = 0; i < 4; i++)
+            {
+                NotePlayers.Add(new WaveOutEvent());
+                VorbisWaveReader vorbis = new VorbisWaveReader("../../Sound_Effects/aria" + 0 + ".ogg");
+                NoteReaders.Add(vorbis);
+            }
+
+            if (File.Exists("Settings.txt"))
+            {
+
+                foreach (var item in File.ReadAllLines("Settings.txt"))
+                {
+                    string[] splitter = item.Split(':');
+                    switch (splitter[0])
+                    {
+                        case "Max Momentum":
+                            try
+                            {
+                                MaxMomentum = int.Parse(splitter[1]);
+                                MaxMomentumSetter.Text = splitter[1];
+                            }
+                            catch (Exception)
+                            {
+                                MaxMomentum = 50;
+                            }
+                            break;
+                        case "Momentum Adjustment":
+                            try
+                            {
+                                MomentumAdjustment = int.Parse(splitter[1]);
+                                MomentumAdjustmentSetter.Text = splitter[1];
+                            }
+                            catch (Exception)
+                            {
+                                MomentumAdjustment = 180;
+                            }
+                            break;
+                        case "Momentum Adjustment Interval":
+                            try
+                            {
+                                MomentumAdjustmentTimer.Interval = int.Parse(splitter[1]);
+                                MomentumAdjustmentIntervalSetter.Text = splitter[1];
+                            }
+                            catch (Exception)
+                            {
+                                MomentumAdjustmentTimer.Interval = 230;
+                            }
+                            break;
+                        case "Targetting Timer Interval":
+                            try
+                            {
+                                TargettingTimer.Interval = int.Parse(splitter[1]);
+                                TargettingTimerIntervalSetter.Text = splitter[1];
+                            }
+                            catch (Exception)
+                            {
+                                TargettingTimer.Interval = 3500;
+                            }
+                            break;
+                        case "Sound Effects":
+                            try
+                            {
+                                SoundCheck.IsChecked = bool.Parse(splitter[1]);
+                            }
+                            catch (Exception)
+                            {
+                                SoundCheck.IsChecked = true;
+                            }
+                            break;
+                        case "Inaccurate Singing":
+                            try
+                            {
+                                SongInaccuracy.IsChecked = bool.Parse(splitter[1]);
+                            }
+                            catch (Exception)
+                            {
+                                SongInaccuracy.IsChecked = false;
+                            }
+                            break;
+                        case "Volume":
+                            try
+                            {
+                                VolumeSlider.Value = float.Parse(splitter[1], CultureInfo.InvariantCulture.NumberFormat);
+                            }
+                            catch (Exception)
+                            {
+                                VolumeSlider.Value = (float)0.5;
+                            }
+                            break;
+                        case "Audio Players":
+                            try
+                            {
+                                NotePlayers.Clear();
+                                NoteReaders.Clear();
+                                for (int i = 0; i < int.Parse(splitter[1]); i++)
+                                {
+                                    NotePlayers.Add(new WaveOutEvent());
+                                    VorbisWaveReader vorbis = new VorbisWaveReader("../../Sound_Effects/aria" + 0 + ".ogg");
+                                    NoteReaders.Add(vorbis);
+                                }
+                                PlayerCountSetter.Text = splitter[1];
+                            }
+                            catch (Exception)
+                            {
+                                NotePlayers.Clear();
+                                NoteReaders.Clear();
+                                for (int i = 0; i < 4; i++)
+                                {
+                                    NotePlayers.Add(new WaveOutEvent());
+                                    VorbisWaveReader vorbis = new VorbisWaveReader("../../Sound_Effects/aria" + 0 + ".ogg");
+                                    NoteReaders.Add(vorbis);
+                                }
+                            }
+                            break;
+                    }
+                }
+
+            }
+
             if (Rand.Next(2) == 1)
             {
                 if (Rand.Next(2) == 1)
@@ -162,16 +287,26 @@ namespace Tetracosm_Remembrance
             MoveAnim.Duration = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
         }
 
+        public bool IsDirectoryEmpty(string path)
+        {
+            return !Directory.EnumerateFileSystemEntries(path).Any();
+        }
+
+        public static double Clamp(double value, double min, double max)
+        {
+            return (value < min) ? min : (value > max) ? max : value;
+        }
+
         private void AdjustMomentum(object sender, ElapsedEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)delegate ()
             {
-                Momentum[0] = Clamp(Momentum[0] + (Target[0] - MainObject.Margin.Left) / MomentumAdjustment, MaxMomentum*-1, MaxMomentum);
-                Momentum[1] = Clamp(Momentum[1] + (Target[1] - MainObject.Margin.Top) / (MomentumAdjustment/2), MaxMomentum * -1, MaxMomentum);
+                Momentum[0] = Clamp(Momentum[0] + (Target[0] - MainObject.Margin.Left) / MomentumAdjustment, MaxMomentum * -1, MaxMomentum);
+                Momentum[1] = Clamp(Momentum[1] + (Target[1] - MainObject.Margin.Top) / (MomentumAdjustment / 2), MaxMomentum * -1, MaxMomentum);
                 MoveAnim.To = null;
                 if (MainObject.Margin.Left + Momentum[0] < 0 || MainObject.Margin.Left + Momentum[0] > Width - 40)
                 {
-                    Momentum[0] = Clamp(Momentum[0] + (Target[0] - MainObject.Margin.Left) / (MomentumAdjustment/3), MaxMomentum * -1, MaxMomentum);
+                    Momentum[0] = Clamp(Momentum[0] + (Target[0] - MainObject.Margin.Left) / (MomentumAdjustment / 3), MaxMomentum * -1, MaxMomentum);
                 }
                 if (MainObject.Margin.Top + Momentum[1] < 0 || MainObject.Margin.Top + Momentum[1] > Height - 40)
                 {
@@ -320,7 +455,8 @@ namespace Tetracosm_Remembrance
                     case 1:
                         image.UriSource = new Uri("/Tetracosm Remembrance;component/Gifs_Images/AriaSing.gif", UriKind.Relative);
                         LockedFacingDirection = true;
-
+                        SelectSong();
+                        SongProgress = 0;
                         break;
                     case 2:
                         image.UriSource = new Uri("/Tetracosm Remembrance;component/Gifs_Images/AriaSleep.gif", UriKind.Relative);
@@ -335,7 +471,7 @@ namespace Tetracosm_Remembrance
                             SleepEffectAnim.From = new Thickness(MainObject.Margin.Left + MainObject.Width, Height - MainObject.Height / 2, 0, 0);
                             SleepEffectAnim.By = new Thickness(100, -70, 0, 0);
                         }
-                        int delay = 230;
+                        int delay = (int)MomentumAdjustmentTimer.Interval;
                         foreach (Image Z in Zs)
                         {
                             SleepEffectAnim.BeginTime = TimeSpan.FromMilliseconds(delay);
@@ -363,6 +499,7 @@ namespace Tetracosm_Remembrance
                 ImageBehavior.SetAnimatedSource(MainObject, image);
             }
         }
+
         private void RandomSing(object sender, ElapsedEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)delegate ()
@@ -379,6 +516,22 @@ namespace Tetracosm_Remembrance
                         }
                     }
                     string[] noteData = SongData[SongProgress].Split(',');
+                    try
+                    {
+                        int.Parse(noteData[0]);
+                    }
+                    catch (Exception)
+                    {
+                        noteData[0] = "0";
+                    }
+                    try
+                    {
+                        int.Parse(noteData[1]);
+                    }
+                    catch (Exception)
+                    {
+                        noteData[1] = "500";
+                    }
                     PlayNote(int.Parse(noteData[0]), int.Parse(noteData[1]));
                     SongProgress++;
                 }
@@ -394,6 +547,7 @@ namespace Tetracosm_Remembrance
                 FinishedSong = false;
             }
         }
+
         public void PlayNote(int note, int delayBeforeNextNote = 0)
         {
             if (note < 0)
@@ -491,7 +645,6 @@ namespace Tetracosm_Remembrance
                 }
             }
         }
-
 
         private void PanelToggles(object sender, KeyEventArgs e)
         {
@@ -629,16 +782,16 @@ namespace Tetracosm_Remembrance
             switch (Rand.Next(4))
             {
                 case 0:
-                    Momentum[0] = 50;
+                    Momentum[0] = MaxMomentum;
                     break;
                 case 1:
-                    Momentum[1] = 50;
+                    Momentum[1] = MaxMomentum;
                     break;
                 case 2:
-                    Momentum[0] = -50;
+                    Momentum[0] = MaxMomentum * -1;
                     break;
                 case 3:
-                    Momentum[1] = -50;
+                    Momentum[1] = MaxMomentum * -1;
                     break;
             }
         }
@@ -683,7 +836,7 @@ namespace Tetracosm_Remembrance
             try
             {
                 int playercount = int.Parse(PlayerCountSetter.Text);
-                if (playercount>0)
+                if (playercount > 0)
                 {
                     SingTimer.Stop();
                     NotePlayers.Clear();
@@ -692,7 +845,7 @@ namespace Tetracosm_Remembrance
                     NextPlayer = 0;
                     for (int i = 0; i < playercount; i++)
                     {
-                        NotePlayers.Add(new WaveOutEvent()); 
+                        NotePlayers.Add(new WaveOutEvent());
                         VorbisWaveReader vorbis = new VorbisWaveReader("../../Sound_Effects/aria" + 0 + ".ogg");
                         NoteReaders.Add(vorbis);
                     }
@@ -727,12 +880,14 @@ namespace Tetracosm_Remembrance
             try
             {
                 MomentumAdjustmentTimer.Interval = int.Parse(MomentumAdjustmentIntervalSetter.Text);
-                TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
+                MoveAnim.Duration = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
+                SleepEffectAnim.BeginTime = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
             }
             catch (Exception)
             {
                 MomentumAdjustmentTimer.Interval = 230;
-                TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
+                MoveAnim.Duration = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
+                SleepEffectAnim.BeginTime = TimeSpan.FromMilliseconds(MomentumAdjustmentTimer.Interval);
             }
         }
 
@@ -746,6 +901,20 @@ namespace Tetracosm_Remembrance
             {
                 TargettingTimer.Interval = 3500;
             }
+        }
+
+        private void SaveSettings(object sender, EventArgs e)
+        {
+            string settings = "";
+            settings += $"Max Momentum:{MaxMomentum}\n";
+            settings += $"Momentum Adjustment:{MomentumAdjustment}\n";
+            settings += $"Momentum Adjustment Interval:{MomentumAdjustmentTimer.Interval}\n";
+            settings += $"Targetting Timer Interval:{TargettingTimer.Interval}\n";
+            settings += $"Sound Effects:{SoundCheck.IsChecked}\n";
+            settings += $"Inaccurate Singing:{SongInaccuracy.IsChecked}\n";
+            settings += $"Volume:{VolumeSlider.Value}\n";
+            settings += $"Audio Players:{NotePlayers.Count}";
+            File.WriteAllText("Settings.txt", settings);
         }
     }
 }

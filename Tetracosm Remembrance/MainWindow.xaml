@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Tetracosm_Remembrance"
         xmlns:gif="http://wpfanimatedgif.codeplex.com" x:Class="Tetracosm_Remembrance.MainWindow"
         mc:Ignorable="d"
-        Title="Aria" Height="450" Width="800" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Topmost="True" Left="0" Top="0" HorizontalAlignment="Left" VerticalAlignment="Top" KeyUp="PanelToggles" Icon="/Gifs_Images/AriaSleep.gif">
+        Title="Aria" Height="450" Width="800" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Topmost="True" Left="0" Top="0" HorizontalAlignment="Left" VerticalAlignment="Top" KeyUp="PanelToggles" Icon="/Gifs_Images/AriaSleep.gif" Closed="SaveSettings">
     <Grid>
         <Image x:Name="MainObject" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Source="/Gifs_Images/AriaFly.gif" gif:ImageBehavior.AnimatedSource="/Gifs_Images/AriaFly.gif" RenderOptions.BitmapScalingMode="NearestNeighbor" MouseRightButtonDown="MainObject_RightClick" MouseLeftButtonDown="MainObject_Flick" Panel.ZIndex="10">
             <Image.LayoutTransform>
@@ -38,7 +38,7 @@
             <Button Content="4" HorizontalAlignment="Left" Margin="210,10,10,10" VerticalAlignment="Center" Width="40" Height="40" FontSize="24" BorderBrush="#FF7D1E1E" Background="#FFFA3C3C" Click="PianoButtonDown"/>
             <Button Content="5" HorizontalAlignment="Left" Margin="260,10,10,10" VerticalAlignment="Center" Width="40" Height="40" FontSize="24" Background="#FFFA3C3C" BorderBrush="#FF7D1E1E" Click="PianoButtonDown"/>
         </Grid>
-        <Grid x:Name="SettingsPanel" Background="#996D6D6D" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="20">
+        <Grid x:Name="SettingsPanel" Background="#996D6D6D" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="20" Visibility="Collapsed">
             <CheckBox x:Name="SoundCheck" Content="Sound Effects" HorizontalAlignment="Left" Margin="10,170,0,0" VerticalAlignment="Top" IsChecked="True"/>
             <CheckBox x:Name="SongInaccuracy" Content="Inaccurate Singing" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="False" Margin="10,195,0,0"/>
             <Slider x:Name="VolumeSlider" HorizontalAlignment="Left" Margin="10,225,0,0" VerticalAlignment="Top" Width="120" Maximum="1" LargeChange="0.2" Value="0.5"/>
