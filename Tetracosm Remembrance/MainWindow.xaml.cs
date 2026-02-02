@@ -427,8 +427,8 @@ namespace Tetracosm_Remembrance
                 {
                     TargetX.Content = "TargetX: " + Math.Round(Target[0], 1).ToString();
                     TargetY.Content = "TargetY: " + Math.Round(Target[1], 1).ToString();
-                    Switcher++;
                 }
+                Switcher++;
             });
         }
 
